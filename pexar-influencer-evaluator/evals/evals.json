@@ -1,0 +1,23 @@
+{
+  "skill_name": "pexar-influencer-evaluator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我评估一下这个红人，看看适不适合和我们合作：https://www.tiktok.com/@sarahscutelife",
+      "expected_output": "应该访问该 TikTok 主页，提取粉丝数/互动率/视频内容风格，然后按六维打分，最后输出 YES/MAYBE/NO 结论和结构化报告",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这个ins博主要不要合作？https://www.instagram.com/my_home_by_kendra",
+      "expected_output": "应识别出 @my_home_by_kendra 是 home decor 博主，调性匹配但节点适配性需评估，应归入日常合作候选池而非付费合作，给出 MAYBE 级别结论",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "评估下这个：https://www.tiktok.com/@katalinalynn_",
+      "expected_output": "应识别出哥特/暗黑风格，视觉美学得分极低（≤2），触发直接 NO 的否决条件，输出 NO 结论",
+      "files": []
+    }
+  ]
+}
