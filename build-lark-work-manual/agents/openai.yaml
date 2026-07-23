@@ -1,0 +1,4 @@
+interface:
+  display_name: "飞书工作说明书生成与发布"
+  short_description: "整合飞书资料，生成全面工作说明书并发布为 HTML"
+  default_prompt: "使用 $build-lark-work-manual 根据我的飞书资料制作并发布一份全面的工作说明书。"
