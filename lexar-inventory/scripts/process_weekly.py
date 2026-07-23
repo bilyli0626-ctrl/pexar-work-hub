@@ -124,11 +124,20 @@ def process_inventory(stock_sheet):
     return path, len(inventory)
 
 
+def get_sale_row_count():
+    """Look up the sale sheet's actual row count so we never truncate."""
+    for s in get_workbook_info():
+        if s['sheet_id'] == SALE_SHEET_ID:
+            return s['row_count']
+    return 500
+
+
 def process_sales():
+    row_count = get_sale_row_count()
     data = run_lark_cli([
         "+csv-get", "--url", FEISHU_URL,
         "--sheet-id", SALE_SHEET_ID,
-        "--range", "A1:O500"
+        "--range", f"A1:O{row_count}"
     ])
 
     headers, rows = parse_csv_rows(data['data']['annotated_csv'])
@@ -138,21 +147,27 @@ def process_sales():
         customer = row.get('Customer', '').strip()
         if 'Amazon' in customer or 'AMAZON' in customer:
             continue
+        qty_str = row.get('QTY', '').strip()
+        try:
+            qty = float(qty_str) if qty_str else 0
+        except ValueError:
+            qty = 0
+        if qty <= 0:
+            continue
         non_amazon.append(row)
 
-    sale_headers = ['Ship Date', 'Customer', 'Standard PN', 'QTY', 'Region']
     wb = Workbook()
     ws = wb.active
     ws.title = '销售明细'
-    ws.append(sale_headers)
+    ws.append(headers)
     for cell in ws[1]:
         cell.font = Font(bold=True)
 
     for row in non_amazon:
-        ws.append([row.get(h, '') for h in sale_headers])
+        ws.append([row.get(h, '') for h in headers])
 
-    for i, col in enumerate(sale_headers, 1):
-        ws.column_dimensions[chr(ord('A') + i - 1)].width = 18
+    for i in range(len(headers)):
+        ws.column_dimensions[chr(ord('A') + i)].width = 18
 
     path = os.path.join(OUTPUT_DIR, 'sales_upload_full.xlsx')
     wb.save(path)
